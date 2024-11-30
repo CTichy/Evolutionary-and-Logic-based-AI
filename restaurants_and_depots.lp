@@ -21,7 +21,7 @@ restaurant(19, 60).   % Restaurant 19 at position 60 km
 restaurant(20, 63).   % Restaurant 20 at position 63 km
 
 % Number of depots to select
-#const depots = 5.
+depots(5).
 
 % Maximum allowed total distance
-#const maxdist = 18.
+maxdist(7).
