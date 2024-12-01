@@ -1,6 +1,6 @@
 % =================
 % Application 1: Task-Part
-% AUTHORS: Anna M. Punzengruber, Martin Stasek, Carlos E. Tichy
+% AUTHORS: GROUP 10 - Anna M. Punzengruber, Martin Stasek, Carlos E. Tichy
 % =================
 
 % =================
