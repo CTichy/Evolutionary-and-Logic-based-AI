@@ -1,61 +1,53 @@
 % =================
-% INPUT DATA
+% Application 1: Task-Part
+% AUTHORS: Anna M. Punzengruber, Martin Stasek, Carlos E. Tichy
 % =================
-% Example data to be entered externally  (e.g. restaurants_and_depots.lp)
+
+% =================
+% INPUT DATA in other file
+% =================
+% Example data to be entered externally  (e.g. by restaurants_and_depots.lp)
 % restaurant(1, 3).    % Restaurant 1 is located at position 3
 % restaurant(2, 5).    % Restaurant 2 is located at position 5
 % restaurant(3, 8).    % Restaurant 3 is located at position 8
 % restaurant(4, 10).   % Restaurant 4 is located at position 10
-% depots(2).           % Number of depots to select
-% maxdist(10).         % Maximum allowed total distance
-% #const depots = 2.	% Number of depots to select
-% #const maxdist = 10.	% Maximum allowed total distance
+% depots(5).	% Number of depots to select
+% maxdist(2).	% Maximum allowed total distance
 
 % =================
 % CMD LINE TO RUN
 % =================
-% clingo .\restaurants_and_depots.lp .\resource_planning.lp -t 4 -n 0 --warn no-operation-undefined
+% clingo ./restaurants_and_depots.lp ./resource_planning.lp -t 1 -n 0
  
-% =================
-% HELPER PREDICATES
-% =================
-% Ground constants from input facts
-depots_count(depots).
-max_distance(maxdist).
-
-% Calculate the absolute value of the difference between two positions
-diff(PosA, PosB, Diff) :- restaurant(_, PosA), restaurant(_, PosB), PosA >= PosB, Diff = PosA - PosB.
-diff(PosA, PosB, Diff) :- restaurant(_, PosA), restaurant(_, PosB), PosA < PosB, Diff = PosB - PosA.
-
-% Distance between a restaurant and a chosen depot
-dist(R, D, Distance) :- restaurant(R, PosR), restaurant(D, PosD), choose(D), diff(PosR, PosD, Distance). % Only consider chosen depots
-
-% A restaurant is served by at least one depot
-served_by_depot(R) :- restaurant(R, _), dist(R, _, _).
-
-% Minimum distance from a restaurant to a chosen depot
-min_dist(R, MinDist) :- restaurant(R, _), MinDist = #min { Distance : dist(R, D, Distance) }.
-
-% Total sum of distances for all restaurants to their closest depot
-total_distance(SumDist) :- SumDist = #sum { MinDist : restaurant(R, _), min_dist(R, MinDist) }.
-
 % =================
 % MAIN LOGIC
 % =================
-% Select exactly K depots
-1 { choose(D) : restaurant(D, _) } K :- depots_count(K).
 
-% =================
-% CONSTRAINS
-% =================
-% Ensure every restaurant is served by at least one depot
-:- restaurant(R, _), not served_by_depot(R).
+% Select exactly K depots
+K { choose(D) : restaurant(D, _) } K :- depots(K).
+
+% Calculate the absolute value of the difference between restaurant and depots
+dist_rest_dep(R, DISTANCE) :- restaurant(R, POS_A), restaurant(D, POS_B), choose(D), POS_A >= POS_B, DISTANCE = POS_A - POS_B.
+dist_rest_dep(R, DISTANCE) :- restaurant(R, POS_A), restaurant(D, POS_B), choose(D), POS_A < POS_B, DISTANCE = POS_B - POS_A.
+
+% A restaurant is served by at least one depot
+served(R) :- restaurant(R, _), dist_rest_dep(R, _).
+:- restaurant(R,_), not served(R).
+
+% Minimum distance from a restaurant to a chosen depot
+min_dist_depot(R, MIN_DIST) :- restaurant(R, _), MIN_DIST = #min { DISTANCE: dist_rest_dep(R, DISTANCE) }, MIN_DIST!=#sup.
+
+% Total distance for every restaurants to their closest depot
+total_distance(SUM_DIST) :- SUM_DIST = #sum { DISTANCE, R: min_dist_depot(R, DISTANCE), DISTANCE!=#sup }.
 
 % Enforce maximum allowed total distance
-:- max_distance(Max), total_distance(SumDist), SumDist > Max.
+:- maxdist(MAX), total_distance(SUM_DIST), SUM_DIST > MAX.
 
 % =================
 % OUTPUT
 % =================
+
 #show choose/1.
-#show total_distance/1.
+%#show min_dist_depot/2.
+%#show total_distance/1.
+%#show dist_rest_dep/2.

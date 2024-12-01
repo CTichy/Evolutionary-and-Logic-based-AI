@@ -1,3 +1,8 @@
+% =================
+% Application 3: Zebra
+% AUTHORS: Anna M. Punzengruber, Martin Stasek, Carlos E. Tichy
+% =================
+
 % Define houses
 house(1..5).
 
@@ -22,6 +27,14 @@ cigar(pall_mall; dunhill; blend; blue_master; prince).
 1 { drinks(H, D) : house(H) } 1 :- drink(D).
 1 { smokes(H, S) : house(H) } 1 :- cigar(S).
 
+% Not necessary anymore => commented out
+% ensure that clingo does not introduce house 6, with house(6)=False
+% :- painted(H, _), not house(H).
+% :- lives_in(H, _), not house(H).
+% :- owns_pet(H, _), not house(H).
+% :- drinks(H, _), not house(H).
+% :- smokes(H, _), not house(H).
+
 % Define adjacency
 adjacent(H1, H2) :- house(H1), house(H2), H1 = H2 + 1.
 adjacent(H1, H2) :- house(H1), house(H2), H1 = H2 - 1.
@@ -30,7 +43,8 @@ adjacent(H1, H2) :- house(H1), house(H2), H1 = H2 - 1.
 painted(H, red) :- lives_in(H, english).          % The Englishman lives in the red house.
 owns_pet(H, dog) :- lives_in(H, swede).           % The Swede keeps dogs.
 drinks(H, tea) :- lives_in(H, dane).              % The Dane drinks tea.
-painted(H2, white) :- painted(H1, green), H1 = H2 - 1.  % The green house is immediately to the left of the white house.
+painted(H1, green) :- painted(H2, white), H1 = H2 - 1. % The green house is immediately to the left of the white house.
+painted(H2, white) :- painted(H1, green), H2 = H1 + 1, adjacent(H1,H2). % we get the solution even when this line is commented out, but nice to have
 drinks(H, coffee) :- painted(H, green).           % They drink coffee in the green house.
 owns_pet(H, bird) :- smokes(H, pall_mall).         % The person who smokes Pall Mall keeps birds.
 painted(H, yellow) :- smokes(H, dunhill).          % The person in the yellow house smokes Dunhill.
@@ -47,3 +61,4 @@ smokes(H1, blend) :- adjacent(H1, H2), drinks(H2, water). % The man who smokes B
 zebraOwner(N) :- lives_in(H, N), owns_pet(H, zebra).
 
 #show zebraOwner/1.
+
