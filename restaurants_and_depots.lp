@@ -3,7 +3,7 @@
 % AUTHORS: GROUP 10 - Anna M. Punzengruber, Martin Stasek, Carlos E. Tichy
 % =================
 
-% restaurant(1,1; 2,2; 3,3). % Could define the restaurants this more compact way, but is a bit more confusing for testing
+% restaurant(1,1; 2,2; 3,3). % Could define the restaurants this more compact way, but is a bit confusing for testing
 
 restaurant(1, 1).     % Restaurant 1 at position 1 km
 restaurant(2, 2).     % Restaurant 2 at position 2 km
