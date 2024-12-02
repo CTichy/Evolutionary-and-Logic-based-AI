@@ -28,7 +28,6 @@ cigar(pall_mall; dunhill; blend; blue_master; prince).
 1 { smokes(H, S) : house(H) } 1 :- cigar(S).
 
 % Not necessary anymore => commented out
-% ensure that clingo does not introduce house 6, with house(6)=False
 % :- painted(H, _), not house(H).
 % :- lives_in(H, _), not house(H).
 % :- owns_pet(H, _), not house(H).
